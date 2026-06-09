@@ -1,12 +1,16 @@
 package br.edu.mca.grafos.algorithms;
 
 import br.edu.mca.grafos.model.AlgorithmResult;
+import br.edu.mca.grafos.model.Edge;
 import br.edu.mca.grafos.model.Graph;
+
+import java.util.*;
 
 public class BfsAlgorithm implements GraphAlgorithm {
 
     @Override
     public AlgorithmResult run(Graph graph, String source, String target) {
+
         /*
          * Implementação esperada:
          *
@@ -29,6 +33,97 @@ public class BfsAlgorithm implements GraphAlgorithm {
          * result.setMessage("Algoritmo executado com sucesso.");
          * return result;
          */
-        throw new UnsupportedOperationException("Grupo BFS: implemente a busca em largura neste arquivo.");
+
+        // algoritmo
+
+
+        AlgorithmResult result = new AlgorithmResult();
+
+        // 1. Validar origem
+        if (source == null || !graph.getNodes().contains(source)) {
+            result.setMessage("Vértice de origem não encontrado.");
+            return result;
+        }
+
+        Map<String, List<Edge>> adjacency = graph.adjacencyList();
+
+        Queue<String> queue = new LinkedList<>();
+        Set<String> visited = new HashSet<>();
+
+        // Inicialização
+        queue.add(source);
+        visited.add(source);
+
+        result.getDistances().put(source, 0.0);
+        result.getPredecessors().put(source, null);
+
+        // 2. BFS
+        while (!queue.isEmpty()) {
+
+            String current = queue.poll();
+
+            result.getVisitedOrder().add(current);
+
+            for (Edge edge : adjacency.getOrDefault(current, Collections.emptyList())) {
+
+                String neighbor = edge.target();
+
+                if (!visited.contains(neighbor)) {
+
+                    visited.add(neighbor);
+                    queue.add(neighbor);
+
+                    result.getDistances().put(
+                            neighbor,
+                            result.getDistances().get(current) + 1
+                    );
+
+                    result.getPredecessors().put(
+                            neighbor,
+                            current
+                    );
+                }
+            }
+        }
+
+        // 3. Reconstrução do caminho
+        if (target != null && graph.getNodes().contains(target)) {
+
+            if (visited.contains(target)) {
+
+                LinkedList<String> path = new LinkedList<>();
+
+                String current = target;
+
+                while (current != null) {
+                    path.addFirst(current);
+                    current = result.getPredecessors().get(current);
+                }
+
+                result.getPath().addAll(path);
+
+                result.setMessage(
+                        "Caminho encontrado de "
+                                + source
+                                + " até "
+                                + target
+                );
+
+            } else {
+
+                result.setMessage(
+                        "Não existe caminho entre "
+                                + source
+                                + " e "
+                                + target
+                );
+            }
+
+        } else {
+
+            result.setMessage("Busca em largura executada com sucesso.");
+        }
+
+        return result;
     }
 }
