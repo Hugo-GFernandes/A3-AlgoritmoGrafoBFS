@@ -39,7 +39,7 @@ public class BfsAlgorithm implements GraphAlgorithm {
 
         AlgorithmResult result = new AlgorithmResult();
 
-        // 1. Validar origem
+        // Validar origem
         if (source == null || !graph.getNodes().contains(source)) {
             result.setMessage("Vértice de origem não encontrado.");
             return result;
@@ -50,14 +50,14 @@ public class BfsAlgorithm implements GraphAlgorithm {
         Queue<String> queue = new LinkedList<>();
         Set<String> visited = new HashSet<>();
 
-        // Inicialização
+        // Inicializacao
         queue.add(source);
         visited.add(source);
 
         result.getDistances().put(source, 0.0);
         result.getPredecessors().put(source, null);
 
-        // 2. BFS
+        // BFS
         while (!queue.isEmpty()) {
 
             String current = queue.poll();
@@ -86,7 +86,7 @@ public class BfsAlgorithm implements GraphAlgorithm {
             }
         }
 
-        // 3. Reconstrução do caminho
+        // Reconstrucao do caminho
         if (target != null && graph.getNodes().contains(target)) {
 
             if (visited.contains(target)) {
